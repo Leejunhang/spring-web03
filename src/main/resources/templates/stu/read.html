@@ -18,7 +18,7 @@
 			<td>{{lcode}}</td>
 			<td>{{lname}}</td>
 			<td>{{persons}}/{{capacity}}</td>
-			<td><button>수강취소</button></td>
+			<td><button lcode="{{lcode}}">수강취소</button></td>
 		</tr>	
 		{{/each}}
 	</table>
@@ -37,6 +37,24 @@
 	const scode="[[${scode}]]";
 	$("#scode").html(scode + "의 수강신청");
 	
+	//수강취소 버튼 클릭 시
+	$("#div_enroll").on("click", "button", function(){
+		const lcode=$(this).attr("lcode");
+		if(confirm(`${lcode}강좌를 취소 하시겠습니까?`)){
+			$.ajax({
+				type:"post",
+				url:"/stu/enroll/delete",
+				data:JSON.stringify({lcode, scode}),
+				contentType:"application/JSON",
+				success:function(){
+					alert("수강신청 취소");
+					getList();
+					getCou();
+				}
+			})
+		}	
+	});
+	
 	//수강신청 버튼 클릭 시
 	$("#div_cou").on("click", "#btn-insert", function(){
 		const lcode=$("#lcode").val();
@@ -45,7 +63,24 @@
 			url:"/stu/enroll/check",
 			data:{scode, lcode},
 			success:function(data){
-				alert(data);
+				if(data==0){
+					//수강신청
+					if(confirm("수강신청 하실래요?")){
+						$.ajax({
+							type:"post",
+							url:"/stu/enroll/insert",
+							data:JSON.stringify({lcode, scode}),
+							contentType:"application/JSON",
+							success:function(){
+								alert("수강신청 완료");
+								getList();
+								getCou();
+							}
+						})
+					}
+				}else{
+					alert("이미 수강신청한 강좌 입니다!")
+				}
 			}
 		})	
 	});
