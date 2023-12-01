@@ -27,12 +27,18 @@
 <script id="temp_cou" type="x-handlebars-template">
 	<select id="lcode">
 		{{#each .}}
-			<option value="{{lcode}}">{{lcode}}:{{lname}}:{{persons}}/{{capacity}}</option>
+			<option value="{{lcode}}" {{fn_disabled persons capacity}}>
+				{{lcode}}:{{lname}}:{{persons}}/{{capacity}}
+			</option>
 		{{/each}}
 	</select>
 	<button id="btn-insert">수강신청</button>
 </script>
-
+<script>
+	Handlebars.registerHelper("fn_disabled", function(p, c){
+		if(p==c) return "disabled";
+	})
+</script>
 <script>
 	const scode="[[${scode}]]";
 	$("#scode").html(scode + "의 수강신청");
